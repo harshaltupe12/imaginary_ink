@@ -39,10 +39,33 @@ const CreatePost = () => {
       alert('Please provide proper prompt');
     }
   }
-  const handleSubmit = ()=>{
+  const handleSubmit = async(e)=>{
+    e.preventDefault();
 
+    if (form.prompt && form.photo) {
+      setLoading(true);
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/post', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ...form }),
+        });
+
+        await response.json();
+        // alert('Success');
+        navigate('/');
+      } catch (err) {
+        alert(err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      alert('Please generate an image with proper details');
+    }
   }
-  const handleChnage = (e)=>{
+  const handleChange = (e)=>{
     setForm({ ...form, [e.target.name]: e.target.value})
   }
 
@@ -65,7 +88,7 @@ const CreatePost = () => {
             name = "name"
             placeholder = "Harshal Tupe"
             value = {form.name}
-            handleChnage = {handleChnage}
+            handleChange = {handleChange}
           />
           <FormField
             labelName = "Prompt"
@@ -73,7 +96,7 @@ const CreatePost = () => {
             name = "prompt"
             placeholder = "a painting of a fox in the style of Starry Night"
             value = {form.prompt}
-            handleChnage = {handleChnage}
+            handleChange = {handleChange}
             isSurpriseMe
             handleSurpriseMe={handleSurpriseMe}
           />
